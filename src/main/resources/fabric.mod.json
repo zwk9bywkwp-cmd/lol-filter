@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "logfilter",
+  "version": "${version}",
+  "name": "Log Filter",
+  "description": "Hide log lines from selected mods in latest.log, debug.log and the console. Configure in Mod Menu.",
+  "authors": ["you"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "preLaunch": ["dev.logfilter.LogFilterMod"],
+    "modmenu": ["dev.logfilter.LogFilterModMenu"]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": ">=26.3",
+    "java": ">=25"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}
