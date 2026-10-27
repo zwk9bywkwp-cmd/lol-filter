@@ -43,9 +43,9 @@ public class LogFilterScreen extends Screen {
 		rowButtons.clear();
 		int cx = this.width / 2;
 
-		addRenderableWidget(new StringWidget(cx - 150, 8, 300, 9, getTitle(), this.font).alignCenter());
+		addRenderableWidget(new StringWidget(cx - 150, 8, 300, 9, getTitle(), this.font));
 		addRenderableWidget(new StringWidget(cx - 150, 20, 300, 9,
-				Component.literal("[X] = this mod's log lines are hidden"), this.font).alignCenter());
+				Component.literal("[X] = this mod's log lines are hidden"), this.font));
 
 		master = Button.builder(masterLabel(), b -> {
 			LogFilterManager.setEnabled(!LogFilterManager.isEnabled());
@@ -83,7 +83,7 @@ public class LogFilterScreen extends Screen {
 			page++;
 			refresh();
 		}).bounds(cx + 70, this.height - 54, 80, 20).build();
-		pageLabel = new StringWidget(cx - 60, this.height - 49, 120, 9, Component.empty(), this.font).alignCenter();
+		pageLabel = new StringWidget(cx - 60, this.height - 49, 120, 9, Component.empty(), this.font);
 		addRenderableWidget(prev);
 		addRenderableWidget(next);
 		addRenderableWidget(pageLabel);
@@ -141,6 +141,22 @@ public class LogFilterScreen extends Screen {
 
 	@Override
 	public void onClose() {
-		Minecraft.getInstance().setScreen(parent);
+		showScreen(parent);
+	}
+
+	/** setScreen was renamed in newer versions, so find whichever "setScreen*" method exists. */
+	private static void showScreen(Screen target) {
+		Minecraft mc = Minecraft.getInstance();
+		for (java.lang.reflect.Method m : Minecraft.class.getMethods()) {
+			if (m.getName().startsWith("setScreen") && m.getParameterCount() == 1
+					&& m.getParameterTypes()[0].isAssignableFrom(Screen.class)) {
+				try {
+					m.invoke(mc, target);
+					return;
+				} catch (ReflectiveOperationException ignored) {
+					// try next candidate
+				}
+			}
+		}
 	}
 }
